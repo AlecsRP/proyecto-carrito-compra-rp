@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Productos Disponibles</title>
+    <style>
+        /* 🎨 Estilos generales */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(180deg, #e3f2fd, #bbdefb);
+            margin: 0;
+            padding: 30px;
+            color: #0d47a1;
+        }
+
+        h1 {
+            text-align: center;
+            color: #0d47a1;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+        }
+
+        /* 🧩 Contenedor de la galería */
+        .galeria {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 🛍️ Tarjeta del producto */
+        .producto {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(13, 71, 161, 0.2);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .producto:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 16px rgba(13, 71, 161, 0.3);
+        }
+
+        /* 📸 Imagen del producto */
+        .producto img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #90caf9;
+            margin-bottom: 15px;
+        }
+
+        /* 🔠 Texto del producto */
+        .producto h3 {
+            margin: 10px 0 5px;
+            color: #0d47a1;
+            font-size: 1.2em;
+        }
+
+        .producto p {
+            color: #1565c0;
+            font-size: 0.95em;
+            margin: 5px 0;
+        }
+
+        /* 💰 Precio */
+        .precio {
+            font-weight: bold;
+            color: #0d47a1;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        /* 🛒 Botón de compra */
+        button {
+            background-color: #1565c0;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #0d47a1;
+        }
+
+        /* 🔙 Enlace inferior */
+        .ver-carrito {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            color: #0d47a1;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .ver-carrito:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🛍️ Productos Disponibles</h1>
+
+<div th:if="${productos == null or productos.empty}">
+    <p style="text-align:center; font-size:1.2em;">No hay productos disponibles en este momento.</p>
+</div>
+
+<!-- 💎 Contenedor de galería -->
+<div class="galeria" th:if="${productos != null and !productos.empty}">
+    <div th:each="p : ${productos}" class="producto">
+        <a th:href="@{/productos/{id}(id=${p.id})}">
+            <img th:src="@{'/img/' + ${p.imagen}}" alt="Imagen producto"
+                 onerror="this.src='/img/default.png'">
+        </a>
+        <h3>
+            <a th:href="@{/productos/{id}(id=${p.id})}"
+               th:text="${p.nombre}" style="text-decoration:none; color:#0d47a1;">
+                Nombre del producto
+            </a>
+        </h3>
+        <p th:text="${p.descripcion}">Descripción breve del producto</p>
+        <p class="precio">Q <span th:text="${p.precio}">0.00</span></p>
+
+        <form th:action="@{/carrito/agregar}" method="post">
+            <input type="hidden" name="productoId" th:value="${p.id}" />
+            <button type="submit">🛒 Agregar al Carrito</button>
+        </form>
+    </div>
+</div>
+
+<a class="ver-carrito" th:href="@{/carrito}">Ver Carrito →</a>
+
+</body>
+</html>
